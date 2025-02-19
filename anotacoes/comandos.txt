@@ -1,0 +1,44 @@
+// Comando para o rodar o servidor nodemon do node js.
+npx nodemon Controller.js
+
+
+app.get('/create', async(req, res) => {
+
+    let create = await user.create({
+
+        name: "Henrique",
+        password: "abc",
+        createdAt: new Date(), 
+        updatedAt: new Date()
+
+    });
+
+    res.send('Usuário criado com sucesso !');
+});
+
+app.get('/read', async (req, res)=> {
+
+    let read = await user.findAll({
+
+        raw:true
+    });
+
+    console.log(read);
+})
+
+app.get('/update', async (req, res)=> {
+
+    let update = await user.findByPk(2, {include:[{all:true}]}).then((response)=>{
+
+        response.Trackings[0].local = 'Maranhão'; 
+        response.Trackings[0].save();
+    })
+});
+
+app.get('/delete', async(req,res)=>{
+
+    user.destroy({
+
+        where: {id: 1}
+    });
+});
