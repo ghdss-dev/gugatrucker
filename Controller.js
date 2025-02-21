@@ -25,7 +25,7 @@ app.post('/login', async (req, res) => {
 
     } else {
 
-        res.send(response);
+        res.send(response.toJSON());
     }
 
 });

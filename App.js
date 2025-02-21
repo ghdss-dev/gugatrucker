@@ -2,12 +2,19 @@ import React, { useEffect, useState } from 'react';
 
 import { NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {Home, Login, Rastreio, } from './views'
-
+import {Home, Login, Rastreio, } from './views';
+import AreaRestrita from './views/arearestrita/AreaRestrita';
 
 export default function App()  {
 
     const Stack = createStackNavigator();
+
+    /*async function teste() {
+
+      let resData = await AsyncStorage.getItem('userData');
+
+      console.log(JSON.parse(resData));
+    }*/
 
     return (
        <NavigationContainer>
@@ -35,7 +42,8 @@ export default function App()  {
               component = {Rastreio} 
             />
 
-            {/*<Stack.Screen name="AreaRestrita" component = {AreaRestrita} />*/}
+            {<Stack.Screen name="AreaRestrita" component = {AreaRestrita} />}
+
           </Stack.Navigator>
 
       </NavigationContainer>

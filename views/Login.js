@@ -1,13 +1,81 @@
 import React, { useEffect, useState } from 'react'; 
 import {KeyboardAvoidingView, TextInput, Image, Text, View, TouchableOpacity, Platform} from 'react-native';
 import { styles } from '../assets/css/Css';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
 
-export default function Login() {
+export default function Login({navigation}) {
 
     const [display, setDisplay] = useState('none');
     const [user, setUser] = useState(null);
     const [password, setPassword] = useState(null); 
-    const [login, setLogin] = useState(null);
+    const [login, setLogin] = useState(false);
+
+    useEffect(()=> {
+
+        verifyLogin();
+
+    }, []); 
+
+    useEffect(() =>{
+
+        if(login === true) {
+
+            biometric();
+        }
+
+    }, [login]);
+
+    // Verifica se o usuário já possui algum login 
+    async function verifyLogin() {
+
+        let response = await AsyncStorage.getItem('userData'); 
+        let json = await JSON.parse(response);
+        console.log(response);
+
+        if(json !== null) {
+
+            setUser(json.name);
+            setPassword(json.password);
+            setLogin(true);
+
+            biometric();
+        }
+    }
+
+     // Função de Biometria
+     async function biometric() {
+
+        console.log('Chamei a biometria');
+    
+        const compatible = await LocalAuthentication.hasHardwareAsync(); // Verifica se há hardware compatível
+
+        if (compatible) {
+
+            let biometricRecords = await LocalAuthentication.isEnrolledAsync();
+
+            if(!biometricRecords) {
+
+                alert('Biometria não cadastrada'); 
+
+            } else {
+
+                let result = await LocalAuthentication.authenticateAsync();
+
+                if(result.success) {
+
+                    sendForm();
+
+                } else {
+
+                    setUser(null); 
+                    setPassword(null);
+                }
+            }
+            
+        }
+
+    }
 
     async function sendForm() {
 
@@ -29,15 +97,25 @@ export default function Login() {
         });
 
         let json = await response.json();
+
+        console.log(json);
         
         if(json === 'error') {
 
             setDisplay('flex');
+
             setTimeout(() => {
 
                 setDisplay('none');
 
             }, 5000);
+
+            await AsyncStorage.clear()
+
+        } else {
+
+            await AsyncStorage.setItem('userData', JSON.stringify(json));
+            navigation.navigate('AreaRestrita');
         }
     }
 

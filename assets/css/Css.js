@@ -83,6 +83,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold", 
     fontSize: 22, 
     color: "#333"
+  }, 
+
+  area__tab: {
+
+    backgroundColor: '#333', 
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333'
   }
 
 });
