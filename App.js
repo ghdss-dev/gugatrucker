@@ -42,7 +42,7 @@ export default function App()  {
               component = {Rastreio} 
             />
 
-            {<Stack.Screen name="AreaRestrita" component = {AreaRestrita} />}
+            {<Stack.Screen name="AreaRestrita" options={{headerShown:false}} component = {AreaRestrita} />}
 
           </Stack.Navigator>
 

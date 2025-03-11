@@ -30,8 +30,58 @@ app.post('/login', async (req, res) => {
 
 });
 
+app.post('/verifyPass', async (req,res)=> {
+
+   let response = await user.findOne({
+
+        where:{id:req.body.id, password: req.body.senhaAntiga}
+
+   });
+
+   if(response === null) {
+
+        res.send(JSON.stringify('Senha Antiga não confere')); 
+
+   } else {
+
+        if(req.body.novaSenha === req.body.confNovaSenha) {
+
+           response.password = req.body.novaSenha; 
+           response.save();
+           res.send(JSON.stringify('Senha atualizada com sucesso !'))
+
+        } else {
+
+            res.send(JSON.stringify('Nova Senha e Confirmação não conferem !')); 
+        }
+   }
+})
+
+// Criação do produto no banco
+app.post('/create', async (req, res)=> {
+
+    let trackingId = '';
+
+    await tracking.create({
+
+        userId: req.body.userId, 
+        code: req.body.code, 
+        local: req.body.local
+    }).then((response) => {
+
+        trackingId += response.id;
+    });
+
+    await product.create({
+
+        trackingId: trackingId,
+        name: req.body.product
+    });
+});
+
 let port = process.env.PORT || 3000;
 app.listen(port, (req, res) => {
 
     console.log('Servidor Rodando');
 });
+

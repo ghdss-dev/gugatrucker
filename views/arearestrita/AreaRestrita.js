@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'; 
-import { Text, View } from 'react-native';
+import { Text, View, Button, BackHandler, Alert } from 'react-native';
 import { styles } from '../../assets/css/Css';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { Profile, Cadastro, Edicao } from '../index';
 import { MaterialIcons } from '@expo/vector-icons'; // Biblioteca de ícones
 
-export default function AreaRestrita() {
+export default function AreaRestrita({navigation}) {
+
     const Tab = createMaterialBottomTabNavigator();
     const [user, setUser] = useState(null); 
 
@@ -18,6 +19,30 @@ export default function AreaRestrita() {
         }
         getUser();
     }, []);
+
+    useEffect(() => {
+        const backAction = () => {
+          Alert.alert('Alerta', 'Deseja mesmo sair do app ?', [
+            {
+              text: 'Não',
+              onPress: () => null,
+              style: 'cancel',
+            },
+            {text: 'Sim', onPress: () => {
+                navigation.navigate('Home'); 
+                BackHandler.exitApp();
+            }},
+          ]);
+          return true;
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction,
+        );
+    
+        return () => backHandler.remove();
+      }, []);
 
     return (
 
