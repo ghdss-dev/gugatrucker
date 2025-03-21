@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'; 
-import { Text, View, TextInput, Touchable, TouchableOpacity} from 'react-native';
+import { Text, View, TextInput, Image, Button, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from '../../assets/css/Css';
 import MenuAreaRestrita from '../../assets/components/MenuAreaRestrita';
 import config from '../../config/config';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 
 
 export default function Cadastro({navigation}) {
@@ -22,7 +24,8 @@ export default function Cadastro({navigation}) {
     useEffect(() => {
 
         randomCode();
-    }, []);
+        setProduct('');
+    }, [response]);
 
     // Pegar o id do usuário 
     async function getUser() {
@@ -63,24 +66,53 @@ export default function Cadastro({navigation}) {
                 local: address
             })
         });
+
+        let json = await response.json(); 
+        setResponse(json);
+    }
+
+    // Compartilhar o QRCode 
+    async function shareQR() {
+
+        const image = config.urlRoot+'img/code.png';
+        FileSystem.downloadAsync(
+            image, 
+            FileSystem.documentDirectory+'code.png'
+        ).then(({uri})=>{
+
+            Sharing.shareAsync(uri);
+        });
+
+        await Sharing.shareAsync();
     }
 
     return (
 
-        <View>
+        <View style={[styles.container, styles.containerTop]}>
+
             <MenuAreaRestrita title='Cadastro' navigation={navigation}/>
+
+            {response && (
+
+                <View>
+                    <Image source={{uri:response, height:180, width:180}} />
+                    <Button title='Compartilhar' onPress={()=>shareQR()} />
+                </View>
+            )}
 
             <View style={styles.login__input}>
                 
                 <TextInput 
                     placeholder='Nome do Produto:'
                     onChangeText={text=>setProduct(text)}
+                    value={product}
                 />
             </View>
 
             <TouchableOpacity style={styles.login__button} onPress={()=> sendForm()}>
                 <Text> Cadastrar </Text>
             </TouchableOpacity>
+
         </View>
     );
 }

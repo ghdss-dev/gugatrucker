@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'; 
+import 'react-native-url-polyfill/auto';
 
 import { NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
