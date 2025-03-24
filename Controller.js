@@ -32,6 +32,41 @@ app.post('/login', async (req, res) => {
 
 });
 
+app.post('/update', async (req, res)=> {
+
+    let response = await tracking.findOne({
+
+        where: {code: req.body.code}, 
+        include: [{all:true}]
+    });
+
+    response.local = req.body.local; 
+    response.updatedAt = new Date(); 
+    response.Products[0].name = req.body.product; 
+    response.save(); 
+    response.Products[0].save();
+    res.send(JSON.stringify('Dados foram atualizados com sucesso !'));
+});
+
+// Exibir o local do rastreio
+app.post('/rastreio', async(req, res)=> {
+
+    let response = await tracking.findOne({
+
+        where: {code: req.body.code}, 
+        include: [{all:true}]
+    });
+
+    if(response === null) {
+
+        res.send(JSON.stringify(`Nenhum produto encontrado`));
+
+    } else {
+
+        res.send(JSON.stringify(`Sua encomenda ${response.Products[0].name} já está a caminho ${response.local}.`))
+    }
+});
+
 app.post('/verifyPass', async (req,res)=> {
 
    let response = await user.findOne({
@@ -89,6 +124,18 @@ app.post('/create', async (req, res)=> {
         res.send(JSON.stringify(url));
     })
 });
+
+// Pegar os dados do produto 
+app.post('/searchProduct', async (req, res)=> {
+
+    let response = await tracking.findOne({
+
+        include:[{model:product}], 
+        where: {code: req.body.code}
+    }); 
+
+    res.send(JSON.stringify(response));
+})
 
 let port = process.env.PORT || 3000;
 app.listen(port, (req, res) => {

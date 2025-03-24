@@ -141,7 +141,17 @@ const styles = StyleSheet.create({
 
     width: '100%', 
     display: display
-  })
+  }), 
+
+  rastreio__inputMargin:{
+
+    marginTop: 20, 
+    marginBottom: 30,
+    borderColor: '#ccc', 
+    borderBottomWidth: 1, 
+    paddingLeft: 20, 
+    paddingRight: 20 
+  }
 
 });
 
